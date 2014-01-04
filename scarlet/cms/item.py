@@ -222,7 +222,7 @@ class FormView(ModelCMSMixin, ModelFormMixin, ModelCMSView):
                 model = self.form_class.Meta.model
             else:
                 model = self.model
-            fc = self.customize_form_widgets(self.form_class)
+            fc = self.customize_form_widgets(self.form_class, fields=fields)
             params['form'] = fc
         else:
             if self.model is not None:
@@ -237,6 +237,7 @@ class FormView(ModelCMSMixin, ModelFormMixin, ModelCMSView):
                 # from that
                 model = self.get_queryset().model
 
+        
         return model_forms.modelform_factory(model, **params)
 
     def get_form_kwargs(self):

@@ -316,7 +316,7 @@ class CMSView(BaseView):
                 kwargs[k] = request_kwargs[k]
         return kwargs
 
-    def customize_form_widgets(self, form_class):
+    def customize_form_widgets(self, form_class, fields=None):
         """
         Hook for customizing widgets for a form_class. This is needed
         for forms that specify their own fields causing the
@@ -330,8 +330,13 @@ class CMSView(BaseView):
         custom widget.
         """
         attrs = {}
+        if fields:
+            fields = set(fields)
 
         for k, f in form_class.base_fields.items():
+            if fields and not k in fields:
+                continue
+
             if isinstance(f.widget, widgets.APIModelChoiceWidget) \
                     or isinstance(f.widget, widgets.APIManyChoiceWidget):
                 field = copy.deepcopy(f)
@@ -349,10 +354,6 @@ class CMSView(BaseView):
         Overrides the custom dispatch method to raise a Http404
         if the current user does not have view permissions.
         """
-
-        self.request = request
-        self.args = args
-        self.kwargs = kwargs
 
         if not self.can_view(request.user):
             raise http.Http404
