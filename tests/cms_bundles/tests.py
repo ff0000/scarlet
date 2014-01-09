@@ -6,8 +6,12 @@ from django.test.client import Client
 from django.contrib.auth.models import User
 
 from scarlet.cms import bundles, views
+from scarlet.cms.item import FormView
 
+from .forms import TestPostForm
 from models import *
+
+
 
 
 
@@ -76,6 +80,14 @@ class BundleViewsTestCase(TestCase):
     def test_delete(self):
         resp = self.client.get('/admin/blog/%s/edit/delete/' % self.post.pk)
         self.assertEqual(resp.status_code, 200)
+
+    def test_wrong_fields(self):
+        f = FormView(model=Post)
+        f.form = TestPostForm
+        f.fieldsets = (('Post', {'fields': ('title',)}),)
+        form_class = f.get_form_class()
+        form = form_class()
+        self.assertEqual(form.fields.keys(), 'title')
 
 
 class TestMainBundle(bundles.Bundle):

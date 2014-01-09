@@ -16,3 +16,8 @@ class EditAuthorForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(EditAuthorForm, self).__init__(*args, **kwargs)
+
+
+class TestPostForm(forms.ModelForm):
+    class Meta:
+        model = Post
