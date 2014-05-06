@@ -5,6 +5,7 @@ from . import handler
 
 class AutoTagModel(models.Model):
     tags = handler.get_tag_manager()
+    _tag_instance = handler.get_model()()
 
     def _set_auto_tags(self, value):
         if value:
@@ -18,10 +19,10 @@ class AutoTagModel(models.Model):
 
     def add_pending_tags(self, field_tags):
         if self.auto_tags:
-            needed_tags = set(field_tags).union(self.auto_tags)
+            needed_tags = [ self._tag_instance.slugify(x) for x in set(field_tags).union(self.auto_tags) ]
             existing_tags = {}
-            for t in handler.get_model().objects.filter(name__in=needed_tags):
-                existing_tags[t.name] = t
+            for t in handler.get_model().objects.filter(slug__in=needed_tags):
+                existing_tags[t.slug] = t
 
             current_tags = set([t.pk for t in self.tags.all()])
             for tag in needed_tags:
