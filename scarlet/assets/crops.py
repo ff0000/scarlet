@@ -91,7 +91,11 @@ class CropConfig(object):
 
     def rotate_by_exif(self, im):
         if 'exif' in im.info:
-            exifinfo = im._getexif()
+            try:
+                exifinfo = im._getexif()
+            except (IOError, KeyError, IndexError):
+                return im
+
             if exifinfo != None:
                 # 274 is exif code for orientation
                 orientation = exifinfo.get(274, None)

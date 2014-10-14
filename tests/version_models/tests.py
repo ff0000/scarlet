@@ -858,3 +858,20 @@ class ManagerTests(TestCase):
                         object_id=book.object_id))
         schema = manager.get_schema()
         self.assertEqual(schema, None)
+
+    def testLazyEval(self):
+        schema = manager.get_schema()
+        self.assertEqual(schema, None)
+        book = models.Book.objects.get(vid=1)
+        book.publish()
+
+        manager.activate('published')
+        qs = models.Book.objects.filter(pk=1)
+        self.assertEqual(qs.count(), 1)
+        manager.deactivate()
+
+        manager.activate('draft')
+        self.assertEqual(qs.count(), 1)
+        manager.deactivate()
+
+        self.assertEqual(qs.count(), 2)

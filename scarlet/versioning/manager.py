@@ -6,6 +6,22 @@ from django.db import connections
 _mode = local()
 
 
+class ContextState(object):
+    """
+    Checks the current context every
+    time the query is evaluated.
+    """
+
+    def prepare(self):
+        return self
+
+    def as_sql(self, qn=None, connection=None):
+        current_state = getattr(_mode, "current_state", None)
+        if not current_state:
+            return '"state"', tuple()
+        else:
+            return "%s", (current_state,)
+
 def activate(state):
     """
     Activate a state in this thread.
@@ -44,10 +60,8 @@ class VersionManager(models.Manager):
     use_for_related_fields = True
 
     def get_query_set(self):
-        current_state = getattr(_mode, "current_state", None)
         q = super(VersionManager, self).get_query_set()
-        if current_state:
-            q = q.filter(state=current_state)
+        q = q.filter(state=ContextState())
         return q
 
 
