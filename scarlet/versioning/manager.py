@@ -15,7 +15,7 @@ class ContextState(object):
     def prepare(self):
         return self
 
-    def _prepare(self, val):
+    def _prepare(self, val=None):
         return self
 
     def as_sql(self, qn=None, compiler=None, connection=None):
