@@ -1,6 +1,7 @@
 from django import http
 from django.views.generic.detail import SingleObjectMixin
 
+from scarlet.versioning.management import get_db_default_schema
 from . import manager
 
 
@@ -21,9 +22,9 @@ class PreviewableObject(SingleObjectMixin):
         schema = manager.get_schema()
         vid = None
         if self.request.GET.get('vid') and self.request.user.is_staff and \
-                        self.request.user.is_active:
+                self.request.user.is_active:
             try:
-                schema = 'public'
+                schema = get_db_default_schema()
                 vid = int(self.request.GET.get('vid'))
                 queryset = self.model.normal.filter(vid=vid)
             except ValueError:

@@ -104,7 +104,15 @@ class MSSQLBackend(object):
         # `DEFAULT_SCHEMA` is database name in settings
         database_name = settings.DATABASES.get('default').get('NAME')
         self.DEFAULT_SCHEMA = database_name
-        if database_name[:5] == 'test_':
+        # `Azure DB` is using `dbo` as default schema and `MSSQL` for Linux is
+        # using dbname as schema. For this reason, we need an addtional setting
+        # to check if we're using `Azure DB` or `MSSQL`:
+        #  'OPTIONS': {
+        #      'is_azuredb': True,
+        #   }
+        #
+        azure_options = settings.DATABASES.get('default').get('OPTIONS').get('is_azuredb')
+        if database_name[:5] == 'test_' or azure_options:
             self.DEFAULT_SCHEMA = 'dbo'
         self.cursor = connection.cursor()
 

@@ -12,6 +12,21 @@ from .mssql_migration import MSSQLBackend
 DATABASE_ENGINE = settings.DATABASES['default']['ENGINE']
 
 
+def get_db_default_schema():
+    default_db = settings.DATABASES.get('default')
+    database_engine = default_db.get('ENGINE')
+    dbname = default_db.get('NAME')
+
+    if database_engine == 'scarlet.versioning.postgres_backend':
+        return 'public'
+    elif database_engine == 'scarlet.versioning.mssql_backend':
+        azure_options = default_db.get('OPTIONS').get('is_azuredb')
+        if dbname[:5] == 'test_' or azure_options:
+            return 'dbo'
+        return dbname
+    return None
+
+
 def do_updates(m):
     if DATABASE_ENGINE == 'scarlet.versioning.postgres_backend':
         klass = PostgresBackend()

@@ -15,6 +15,9 @@ try:
 except ValueError:
     from scheduling.models import Schedulable
 
+
+from scarlet.versioning.management import get_db_default_schema
+
 try:
     from django.db.transaction import atomic as xact
 except ImportError:
@@ -928,9 +931,9 @@ class VersionView(BaseVersionedModel):
 
     def delete(self, **kwargs):
         with xact():
-            # Delete's happen in public so that all
+            # Delete's happen in default schema so that all
             # versions are found.
-            with manager.SwitchSchema('public'):
+            with manager.SwitchSchema(get_db_default_schema()):
                 super(VersionView, self).delete(**kwargs)
 
     def _get_should_save_base(self):
