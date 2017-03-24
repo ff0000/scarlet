@@ -11,7 +11,7 @@ class DatabaseWrapper(DatabaseWrapper):
         self.creation = ViewDatabaseCreation(self)
         self.schema = self.UNTOUCHED
 
-    def _cursor(self):
+    def _cursor(self, name=None):
         from ..manager import get_schema
 
         cursor = super(DatabaseWrapper, self)._cursor()
@@ -27,8 +27,8 @@ class DatabaseWrapper(DatabaseWrapper):
     def reset_schema(self):
         self.schema = self.UNTOUCHED
 
-class ViewDatabaseCreation(DatabaseCreation):
 
+class ViewDatabaseCreation(DatabaseCreation):
     def _sql_for_inline_fk_refs(self, field, known_models, style, model=None):
         # Hack to point references to the correct table.
         view_table = field.rel.to._meta.db_table
