@@ -18,22 +18,22 @@ from . import settings
 # NOT EVERYTHING IS SUPPORTED, I DON'T CARE.
 TRANSLATION_DICT = {
     # Day
-    'd' : 'dd',
-    'l' : 'DD',
-    'j' : 'oo',
+    'd': 'dd',
+    'l': 'DD',
+    'j': 'oo',
     # Month
-    'B' : 'MM',
-    'm' : 'mm',
-    'b' : 'M',
+    'B': 'MM',
+    'm': 'mm',
+    'b': 'M',
     # Year
-    'Y' : 'yy',
-    'y' : 'y',
+    'Y': 'yy',
+    'y': 'y',
     # Time
-    'p' : 'TT',
-    'I' : 'hh',
-    'H' : 'HH',
-    'M' : 'mm',
-    'S' : 'ss',
+    'p': 'TT',
+    'I': 'hh',
+    'H': 'HH',
+    'M': 'mm',
+    'S': 'ss',
 }
 
 
@@ -299,7 +299,7 @@ class SplitDateTime(widgets.SplitDateTimeWidget):
     Widget for datetime fields. Uses DateWidget, TimeChoiceWidget.
     """
 
-    def __init__(self, widgets=(DateWidget, TimeChoiceWidget),attrs=None):
+    def __init__(self, widgets=(DateWidget, TimeChoiceWidget), attrs=None):
         forms.MultiWidget.__init__(self, widgets, attrs)
 
     def format_output(self, rendered_widgets):
@@ -359,10 +359,9 @@ class DateRenderer(RadioFieldRenderer):
         choice = self.choices[idx]
         return self.return_choice(choice, idx)
 
-
     def render(self):
-        return mark_safe(u'<fieldset class="datetime">\n%s\n</fieldset>' % u'\n'.join([u'%s'
-                % force_unicode(w) for w in self]))
+        return mark_safe(u'<fieldset class="datetime">\n%s\n</fieldset>' % u'\n'.join([u'%s' % force_unicode(w) for w in self]))
+
 
 class RadioDateTimeWidget(widgets.RadioSelect):
     NOW = 'now'
@@ -394,6 +393,7 @@ class RadioDateTimeWidget(widgets.RadioSelect):
         else:
             widget = self.date_class()
             return widget.value_from_datadict(data, files, name)
+
 
 class APIChoiceWidget(widgets.Input):
     """
@@ -433,10 +433,8 @@ class APIChoiceWidget(widgets.Input):
     input_type = 'hidden'
     template = u'<div class="api-select" data-title="%(value)s" data-api="%(link)s" data-add="%(add_link)s">%(input)s</div>'
 
-    def __init__(self, rel, attrs=None, using=None,
-                        view="main", api_url='',
-                        add_view="add", add_url='',
-                        extra_query_kwargs=None):
+    def __init__(self, rel, attrs=None, using=None, view="main", api_url='',
+                 add_view="add", add_url='', extra_query_kwargs=None):
         super(APIChoiceWidget, self).__init__(attrs=attrs)
         self.rel = rel
         self.model = self.rel.to
@@ -450,14 +448,12 @@ class APIChoiceWidget(widgets.Input):
         self._api_link = api_url
         self._add_link = add_url
 
-
     def render(self, name, value, attrs=None, choices=()):
         data = {
-            'input': super(APIChoiceWidget, self).render(name, value,
-                                                          attrs=attrs),
+            'input': super(APIChoiceWidget, self).render(name, value, attrs=attrs),
             'value': conditional_escape(self.label_for_value(value)),
             'link': self.get_api_link(),
-            'add_link' : self.get_add_link()
+            'add_link': self.get_add_link()
         }
         return mark_safe(self.template % data)
 
@@ -471,7 +467,6 @@ class APIChoiceWidget(widgets.Input):
         that can be used in a query string and returned as
         a dictionary.
         """
-
         qs = url_params_from_lookup_dict(self.rel.limit_choices_to)
         if not qs:
             qs = {}
@@ -502,7 +497,6 @@ class APIChoiceWidget(widgets.Input):
         the bundle that is registered as the primary url for the model \
         that this foreign key points to.
         """
-
         if admin_site:
             bundle = admin_site.get_bundle_for_model(self.model)
 
@@ -519,7 +513,6 @@ class APIChoiceWidget(widgets.Input):
         arguments calculated by the `get_qs` method are then added to the
         url. It is up to the destination url to respect them as filters.
         """
-
         url = self._api_link
         if url:
             qs = self.get_qs()
@@ -536,7 +529,6 @@ class APIChoiceWidget(widgets.Input):
         Appends the popup=1 query string to the url so the
         destination url treats it as a popup.
         """
-
         url = self._add_link
         if url:
             return "%s?popup=1" % url
@@ -554,8 +546,7 @@ class APIChoiceWidget(widgets.Input):
 
         if value is not None:
             try:
-                obj = self.model._default_manager.using(self.db
-                                                         ).get(**{key: value})
+                obj = self.model._default_manager.using(self.db).get(**{key: value})
                 return force_unicode(obj)
             except (ValueError, self.model.DoesNotExist):
                 return ''
@@ -583,13 +574,10 @@ class APIModelChoiceWidget(APIChoiceWidget):
     :param add_url: The url for adding a new item. This is only used \
     if the automatic url discovery fails.
     """
-
     template = u'<div class="api-select" data-title="%(value)s" data-api="%(link)s" data-add="%(add_link)s">%(input)s</div>'
 
-    def __init__(self, model, attrs=None, using=None,
-                    limit_choices_to=None,
-                    view="main", api_url='',
-                    add_view="add", add_url=''):
+    def __init__(self, model, attrs=None, using=None, limit_choices_to=None,
+                 view="main", api_url='', add_view="add", add_url=''):
         super(APIChoiceWidget, self).__init__(attrs=attrs)
         self.limit_choices_to = limit_choices_to
         self.model = model
@@ -601,14 +589,11 @@ class APIModelChoiceWidget(APIChoiceWidget):
         self._api_link = api_url
         self._add_link = add_url
 
-
     def get_qs(self):
         return url_params_from_lookup_dict(self.limit_choices_to)
 
     def label_for_value(self, value):
-        return super(APIModelChoiceWidget,
-                        self).label_for_value(value, key='pk')
-
+        return super(APIModelChoiceWidget, self).label_for_value(value, key='pk')
 
 
 class APIManyChoiceWidget(APIChoiceWidget, widgets.SelectMultiple):
@@ -636,10 +621,8 @@ class APIManyChoiceWidget(APIChoiceWidget, widgets.SelectMultiple):
     template = u'<div class="api-select" data-api="%(api_link)s" data-add="%(add_link)s">%(options)s</div>'
     allow_multiple_selected = True
 
-    def __init__(self, model, attrs=None, using=None,
-                    limit_choices_to=None,
-                    view="main", api_url='',
-                    add_view="add", add_url=''):
+    def __init__(self, model, attrs=None, using=None, limit_choices_to=None,
+                 view="main", api_url='', add_view="add", add_url=''):
         super(APIChoiceWidget, self).__init__(attrs=attrs)
         self.limit_choices_to = limit_choices_to
         self.model = model
@@ -654,7 +637,6 @@ class APIManyChoiceWidget(APIChoiceWidget, widgets.SelectMultiple):
     def get_qs(self):
         return url_params_from_lookup_dict(self.limit_choices_to)
 
-
     def update_links(self, request, admin_site=None):
         """
         Called to update the widget's urls. Tries to find the
@@ -668,7 +650,6 @@ class APIManyChoiceWidget(APIChoiceWidget, widgets.SelectMultiple):
         the bundle that is registered as the primary url for the model \
         that this foreign key points to.
         """
-
         if admin_site:
             bundle = admin_site.get_bundle_for_model(self.model.to)
 
@@ -678,13 +659,12 @@ class APIManyChoiceWidget(APIChoiceWidget, widgets.SelectMultiple):
                 self._add_link = self._get_bundle_link(bundle, self.add_view,
                                                        request.user)
 
-
     def render(self, name, value, attrs=None, choices=()):
         final_attrs = self.build_attrs(attrs, name=name)
         data = {
             'api_link': self.get_api_link(),
-            'add_link' : self.get_add_link(),
-            'options' : self.get_options(value, name)
+            'add_link': self.get_add_link(),
+            'options': self.get_options(value, name)
         }
         data.update(final_attrs)
         return mark_safe(self.template % data)
@@ -699,12 +679,13 @@ class APIManyChoiceWidget(APIChoiceWidget, widgets.SelectMultiple):
                 kwargs = {'{0}__in'.format(key): value}
                 if self.limit_choices_to:
                     kwargs.update(self.limit_choices_to)
-                objs = self.model.to._default_manager.using(self.db
-                                 ).filter(**kwargs)
+                objs = self.model.to._default_manager.using(self.db).filter(**kwargs)
                 for obj in objs:
-                    d = { 'text' : force_unicode(obj),
-                          'value' : getattr(obj, key),
-                          'name' : name }
+                    d = {
+                        'text': force_unicode(obj),
+                        'value': getattr(obj, key),
+                        'name': name
+                    }
                     line = '<input type="hidden" data-multiple data-title="%(text)s" name="%(name)s" value="%(value)s" />' % d
                     values.append(line)
             except ValueError:
@@ -782,8 +763,7 @@ class AnnotatedHTMLWidget(widgets.MultiWidget):
 
     def format_output(self, rendered_widgets):
         return mark_safe(u"<div class=\"widget-wysiwyg annotation\">{0} {1} {2}</div>".format(
-                    render_to_string(self.template),
-                    *rendered_widgets))
+            render_to_string(self.template), *rendered_widgets))
 
     def value_from_datadict(self, data, files, name):
         data = [
