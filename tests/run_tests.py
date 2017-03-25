@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import os
 import sys
 import argparse
@@ -6,8 +7,6 @@ import imp
 
 import django
 from django.conf import settings
-
-
 
 
 def setup_test_environment(settings_overide, with_scarlet_blog=False):
@@ -112,6 +111,7 @@ def runtests(settings_overide, test_args):
 
     failures = run_tests(test_args, verbosity=1, interactive=True)
     sys.exit(failures)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

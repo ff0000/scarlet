@@ -59,6 +59,28 @@ class Migration(migrations.Migration):
             bases=(models.Model, version_models.Harmless, version_models.BookReferences),
         ),
         migrations.CreateModel(
+            name='BookNoRelated',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('last_save', models.DateTimeField(editable=False)),
+                ('is_published', models.BooleanField(default=False, editable=False)),
+                ('created_date', models.DateTimeField(default=django.utils.timezone.now, editable=False)),
+                ('v_last_save', models.DateTimeField(null=True, editable=False)),
+                ('state', models.CharField(max_length=50, editable=False, choices=[(b'published', b'published'), (b'scheduled', b'scheduled'), (b'draft', b'draft'), (b'archived', b'archived')])),
+                ('last_scheduled', models.DateTimeField(null=True, editable=False)),
+                ('date_published', models.DateTimeField(null=True, editable=False)),
+                ('user_published', models.CharField(max_length=255, null=True, editable=False)),
+                ('vid', models.PositiveIntegerField(unique=True, editable=False)),
+                ('object_id', models.PositiveIntegerField(editable=False)),
+                ('name', models.CharField(max_length=255)),
+            ],
+            options={
+                b'db_table': 'version_models_booknorelated_base',
+                'managed': False,
+            },
+            bases=(models.Model, version_models.Harmless, version_models.BookReferences),
+        ),
+        migrations.CreateModel(
             name='Cartoon',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
@@ -193,6 +215,36 @@ class Migration(migrations.Migration):
         ),
         migrations.CreateModel(
             name='Book_version',
+            fields=[
+                ('last_save', models.DateTimeField(editable=False)),
+                ('state', models.CharField(max_length=50, editable=False, choices=[(b'published', b'published'), (b'scheduled', b'scheduled'), (b'draft', b'draft'), (b'archived', b'archived')])),
+                ('last_scheduled', models.DateTimeField(null=True, editable=False)),
+                ('date_published', models.DateTimeField(null=True, editable=False)),
+                ('user_published', models.CharField(max_length=255, null=True, editable=False)),
+                ('name', models.CharField(max_length=255)),
+                ('vid', models.AutoField(serialize=False, primary_key=True)),
+                ('author', models.ForeignKey(to='version_models.Author')),
+            ],
+            options={
+                'managed': True,
+            },
+            bases=(models.Model, version_models.Harmless, version_models.BookVersionReferences),
+        ),
+        migrations.CreateModel(
+            name='BookNoRelated_base',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('is_published', models.BooleanField(default=False, editable=False)),
+                ('created_date', models.DateTimeField(default=django.utils.timezone.now, editable=False)),
+                ('v_last_save', models.DateTimeField(null=True, editable=False)),
+            ],
+            options={
+                'abstract': False,
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='BookNoRelated_version',
             fields=[
                 ('last_save', models.DateTimeField(editable=False)),
                 ('state', models.CharField(max_length=50, editable=False, choices=[(b'published', b'published'), (b'scheduled', b'scheduled'), (b'draft', b'draft'), (b'archived', b'archived')])),
@@ -399,9 +451,21 @@ class Migration(migrations.Migration):
             preserve_default=True,
         ),
         migrations.AddField(
+            model_name='booknorelated_version',
+            name='galleries',
+            field=scarlet.versioning.fields.M2MFromVersion(to='version_models.Gallery'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
             model_name='book_version',
             name='object',
             field=models.ForeignKey(related_name='version_version', to='version_models.Book_base'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='booknorelated_version',
+            name='object',
+            field=models.ForeignKey(related_name='version_version', to='version_models.BookNoRelated_base'),
             preserve_default=True,
         ),
     ]
