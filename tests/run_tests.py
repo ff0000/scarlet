@@ -59,7 +59,43 @@ def setup_test_environment(settings_overide, with_scarlet_blog=False):
             'django.contrib.sessions.middleware.SessionMiddleware',
             'django.contrib.auth.middleware.AuthenticationMiddleware',
             'django.contrib.messages.middleware.MessageMiddleware'
-        )
+        ),
+        'LOGGING': {
+            'version': 1,
+            'disable_existing_loggers': False,
+            'formatters': {
+                'verbose': {
+                    'format':
+                    '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+                },
+                'simple': {
+                    'format': '%(levelname)s %(asctime)s %(message)s'
+                },
+            },
+            'handlers': {
+                'stream': {
+                    'level': 'DEBUG',
+                    'class': 'logging.StreamHandler'
+                },
+            },
+            'loggers': {
+                '': {
+                    'handlers': ('stream',),
+                    'level': 'DEBUG',
+                    'propagate': True,
+                },
+                'django_test': {
+                    'handlers': ('stream',),
+                    'level': 'DEBUG',
+                    'propagate': True,
+                },
+                'django.db.backends': {
+                    'handlers': ('stream',),
+                    'level': 'DEBUG',
+                    'propagate': True,
+                }
+            }
+        }
     }
 
     if settings_overide:
