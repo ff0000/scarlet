@@ -121,7 +121,7 @@ class ModelTests(TestCase):
         ad.associates.add(ab)
         self.assertEqual(list(ap.associates.all()), [models.AuthorBase(pk=2)])
         self.assertEqual(
-            list(ad.associates.all()),
+            list(ad.associates.all().order_by('-pk')),
             [models.AuthorBase(pk=2), models.AuthorBase(pk=1)])
 
     def testPublishBook(self):
